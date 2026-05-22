@@ -1,0 +1,4 @@
+company,fiscal_year,period_end,filing_url,total_revenue_musd,net_income_musd,total_assets_musd,total_liabilities_musd,cash_flow_from_operating_activities_musd
+Apple,2023,2023-09-30,https://www.sec.gov/Archives/edgar/data/320193/000032019323000106/aapl-20230930.htm,383285,96995,352583,290437,110543
+Apple,2024,2024-09-28,https://www.sec.gov/Archives/edgar/data/320193/000032019324000123/aapl-20240928.htm,391035,93736,364980,308030,118254
+Apple,2025,2025-09-27,https://www.sec.gov/Archives/edgar/data/320193/000032019325000079/aapl-20250927.htm,416161,112010,359241,285508,111482

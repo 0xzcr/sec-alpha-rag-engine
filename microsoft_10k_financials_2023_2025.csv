@@ -1,0 +1,4 @@
+company,fiscal_year,period_end,filing_url,total_revenue_musd,net_income_musd,total_assets_musd,total_liabilities_musd,cash_flow_from_operating_activities_musd
+Microsoft,2023,2023-06-30,https://www.sec.gov/Archives/edgar/data/789019/000095017023035122/msft-20230630.htm,211915,72361,411976,205753,87582
+Microsoft,2024,2024-06-30,https://www.sec.gov/Archives/edgar/data/789019/000095017024087843/msft-20240630.htm,245122,88136,512163,243686,118548
+Microsoft,2025,2025-06-30,https://www.sec.gov/Archives/edgar/data/789019/000095017025100235/msft-20250630.htm,281724,101832,619003,275524,136162

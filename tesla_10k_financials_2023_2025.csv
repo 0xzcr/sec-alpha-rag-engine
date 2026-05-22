@@ -1,0 +1,4 @@
+company,fiscal_year,period_end,filing_url,total_revenue_musd,net_income_musd,total_assets_musd,total_liabilities_musd,cash_flow_from_operating_activities_musd
+Tesla,2023,2023-12-31,https://www.sec.gov/Archives/edgar/data/1318605/000162828024002390/tsla-20231231.htm,96773,14999,106618,44318,13256
+Tesla,2024,2024-12-31,https://www.sec.gov/Archives/edgar/data/1318605/000162828025003063/tsla-20241231.htm,97690,7147,122070,49157,14923
+Tesla,2025,2025-12-31,https://www.sec.gov/Archives/edgar/data/1318605/000162828026003952/tsla-20251231.htm,94830,3790,135000,52863,14747

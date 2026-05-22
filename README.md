@@ -83,3 +83,19 @@ Vector Database
 RAG Financial Engine
         ↓
 AI Financial Chatbot
+```
+
+## Stage Layout
+
+```txt
+01_ingest/
+    config.py
+    sec_client.py
+    ingest_sec_filings.py
+    README.md
+02_chunk/
+03_index/
+04_structured_store/
+05_rag/
+06_chatbot/
+```

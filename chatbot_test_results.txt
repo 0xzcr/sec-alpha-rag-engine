@@ -1,0 +1,16 @@
+Financial Analysis Chatbot
+Type one of the predefined questions below, or type 'exit' to quit.
+
+Supported queries:
+- What is the total revenue?
+- How has net income changed over the last year?
+- What are the total assets?
+- What are the total liabilities?
+- What is the cash flow from operating activities?
+
+You: Chatbot: Latest-year total revenue for FY2025 is Microsoft 281,724 million USD, Tesla 94,830 million USD, and Apple 416,161 million USD. Combined total revenue is 792,715 million USD.
+You: Chatbot: From FY2024 to FY2025, net income changed by Microsoft +15.5%, Tesla -47.0%, and Apple +19.5%.
+You: Chatbot: Latest-year total assets for FY2025 are Microsoft 619,003 million USD, Tesla 135,000 million USD, and Apple 359,241 million USD. Combined total assets are 1,113,244 million USD.
+You: Chatbot: Latest-year total liabilities for FY2025 are Microsoft 275,524 million USD, Tesla 52,863 million USD, and Apple 285,508 million USD. Combined total liabilities are 613,895 million USD.
+You: Chatbot: Latest-year cash flow from operating activities for FY2025 is Microsoft 136,162 million USD, Tesla 14,747 million USD, and Apple 111,482 million USD. Combined operating cash flow is 262,391 million USD.
+You: Chatbot: Goodbye.

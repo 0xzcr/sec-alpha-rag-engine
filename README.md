@@ -2,32 +2,33 @@
 
 ## Why This Was Built
 
-This project was built to turn raw SEC 10-K filings into a usable financial analysis system that can answer questions about Apple, Microsoft, and Tesla in a grounded way. The goal was to move from static CSV extraction into a full retrieval-augmented workflow that can support both exact financial facts and narrative filing questions.
+This project was built to convert raw SEC 10-K filings into a grounded financial QA system that can answer open-ended questions about Apple, Microsoft, and Tesla. The objective was to move beyond CSV-only extraction and implement a full retrieval-augmented workflow that supports both exact financial facts and narrative filing analysis.
 
-The design was intentionally split into stages so each part of the pipeline has a clear responsibility and can be improved independently.
+The system is intentionally decomposed into stages so that ingestion, chunking, indexing, structured storage, retrieval, and generation can be evolved independently.
 
 ## How It Works
 
-The pipeline follows a simple flow:
+The pipeline follows this execution model:
 
-1. Download and archive SEC filings.
-2. Split the filings into retrieval-friendly chunks.
-3. Build a search index over the chunked text.
-4. Store structured financial facts for exact lookups.
-5. Plan the user query and retrieve the right evidence.
-6. Use MLX to generate the final answer locally.
+1. Ingest SEC filing metadata and source documents.
+2. Normalize filings into structured and raw artifacts.
+3. Split filings into retrieval-ready chunks.
+4. Build a sparse search index over the chunk corpus.
+5. Persist exact financial metrics in a structured store.
+6. Plan the query and retrieve the relevant evidence.
+7. Synthesize the final answer with a local MLX model.
 
-The result is a hybrid system:
+This creates a hybrid system:
 
-- structured data for exact numbers
-- retrieval for filing context
-- local generation for the final response
+- structured data for exact values
+- retrieval for context and explanation
+- local generation for final response synthesis
 
 ## Architecture
 
 ### 1. Ingest
 
-Purpose: fetch SEC submission metadata and raw filing documents.
+Purpose: retrieve SEC submission metadata and raw filing documents.
 
 Relevant files:
 
@@ -35,31 +36,31 @@ Relevant files:
 - [`01_ingest/sec_client.py`](01_ingest/sec_client.py)
 - [`01_ingest/ingest_sec_filings.py`](01_ingest/ingest_sec_filings.py)
 
-What it does:
+Responsibilities:
 
-- pulls filing metadata from SEC endpoints
-- downloads 10-K filing text
-- saves raw filings and a manifest for later stages
+- fetch filing metadata from SEC endpoints
+- download 10-K text from EDGAR archives
+- persist raw filings and manifests for downstream stages
 
 ### 2. Chunk
 
-Purpose: convert raw filings into section-aware retrieval chunks.
+Purpose: convert raw filings into section-aware retrieval units.
 
 Relevant files:
 
 - [`02_chunk/config.py`](02_chunk/config.py)
 - [`02_chunk/chunk_sec_filings.py`](02_chunk/chunk_sec_filings.py)
 
-What it does:
+Responsibilities:
 
-- cleans filing text
-- detects SEC section markers
-- splits filings into overlapping chunks
-- writes a chunk summary for indexing
+- normalize filing text
+- detect SEC section markers
+- build overlapping chunks to preserve local context
+- emit chunk summaries for indexing
 
 ### 3. Index
 
-Purpose: build a retriever over the chunk corpus.
+Purpose: create a retrieval index over the chunk corpus.
 
 Relevant files:
 
@@ -67,16 +68,16 @@ Relevant files:
 - [`03_index/index_sec_chunks.py`](03_index/index_sec_chunks.py)
 - [`03_index/retriever.py`](03_index/retriever.py)
 
-What it does:
+Responsibilities:
 
-- loads the chunk summary
-- creates a TF-IDF matrix
-- stores the index artifact and vocabulary
-- exposes cosine-similarity retrieval
+- load the chunk corpus
+- construct a TF-IDF vector space model
+- persist index artifacts and vocabulary metadata
+- provide cosine-similarity retrieval
 
 ### 4. Structured Store
 
-Purpose: store exact financial figures in a queryable table.
+Purpose: store exact financial facts in a queryable local database.
 
 Relevant files:
 
@@ -84,16 +85,16 @@ Relevant files:
 - [`04_structured_store/build_structured_store.py`](04_structured_store/build_structured_store.py)
 - [`04_structured_store/store.py`](04_structured_store/store.py)
 
-What it does:
+Responsibilities:
 
-- consolidates the company CSV files
-- calculates YoY and ratio-based derived metrics
-- writes CSV and SQLite outputs
-- exposes exact lookup methods for later stages
+- consolidate company CSV inputs
+- compute YoY deltas and derived ratios
+- store exact facts in CSV and SQLite
+- expose lookup utilities for deterministic queries
 
 ### 5. RAG
 
-Purpose: combine retrieval and structured data into a query-ready context layer.
+Purpose: orchestrate retrieval and structured lookup into a single query context.
 
 Relevant files:
 
@@ -104,31 +105,31 @@ Relevant files:
 - [`05_rag/prompts.py`](05_rag/prompts.py)
 - [`05_rag/rag_engine.py`](05_rag/rag_engine.py)
 
-What it does:
+Responsibilities:
 
-- detects company, year, and likely metric from free-form questions
-- routes numeric questions toward structured facts
-- routes narrative questions toward filing chunks
-- prepares prompt-ready context for the generator
+- extract company, year, and metric signals from free-form questions
+- route numeric questions to the structured store
+- route narrative questions to filing retrieval
+- assemble prompt-ready context for the generator
 
 ### 6. Chatbot
 
-Purpose: provide the interactive terminal interface.
+Purpose: provide the terminal-facing interaction layer.
 
 Relevant files:
 
 - [`06_chatbot/config.py`](06_chatbot/config.py)
 - [`06_chatbot/chatbot.py`](06_chatbot/chatbot.py)
 
-What it does:
+Responsibilities:
 
-- accepts user questions in the terminal
-- calls the RAG layer behind the scenes
-- prints responses in a simple interactive loop
+- accept user input in a REPL-style loop
+- invoke the RAG engine
+- print answers and supporting context in the terminal
 
 ### 7. Generation
 
-Purpose: use MLX for local answer generation.
+Purpose: perform local answer generation with MLX on Apple Silicon.
 
 Relevant files:
 
@@ -137,26 +138,26 @@ Relevant files:
 - [`generation/mlx_client.py`](generation/mlx_client.py)
 - [`generation/app.py`](generation/app.py)
 
-What it does:
+Responsibilities:
 
-- checks that the upstream artifacts exist
-- loads the local MLX model
-- converts the RAG context into a chat prompt
-- generates the final answer on the MacBook
+- validate upstream artifacts
+- load the local MLX model
+- translate RAG context into chat messages
+- generate the final answer locally
 
-### 8. Project Launcher
+### 8. Launcher
 
-Purpose: run the entire pipeline from one command.
+Purpose: bootstrap the whole pipeline from one shell entrypoint.
 
 Relevant file:
 
 - [`execute.sh`](execute.sh)
 
-What it does:
+Responsibilities:
 
-- runs the missing upstream stages if needed
-- validates the required SEC environment variable
-- launches the interactive generation loop
+- run missing upstream stages when needed
+- validate the SEC user-agent environment variable
+- launch the interactive generation loop
 
 ## Problems Faced And Fixes
 
@@ -164,79 +165,79 @@ What it does:
 
 Problem:
 
-- EDGAR requests failed with 4xx errors during parsing.
+- EDGAR requests intermittently failed with 4xx responses during parsing.
 
 Fix:
 
 - used declared SEC user-agent headers
-- relied on SEC JSON endpoints instead of brittle scraping
-- added throttling and retry logic for transient failures
+- switched to SEC JSON endpoints where possible
+- added throttling and retry handling for transient failures
 
-### Numbered Folder Import Collisions
-
-Problem:
-
-- folders like `05_rag` and `generation` both had a `config.py`
-- Python sometimes imported the wrong one
-
-Fix:
-
-- loaded local modules explicitly by file path inside `05_rag`
-- avoided bare `from config import ...` in cross-stage code
-
-### Missing Pipeline Artifacts
+### Cross-Stage Import Collisions
 
 Problem:
 
-- generation failed when `data/index/tfidf_index.joblib` or the SQLite store did not exist
+- numbered stage folders contained duplicate module names such as `config.py`
+- Python occasionally resolved imports from the wrong stage
 
 Fix:
 
-- added a prerequisite check in `generation/app.py`
+- loaded `05_rag` modules explicitly by file path
+- avoided ambiguous bare imports in cross-stage orchestration code
+
+### Missing Artifacts
+
+Problem:
+
+- generation failed when the index artifact or structured store did not exist
+
+Fix:
+
+- added prerequisite checks in the generation layer
 - made `execute.sh` build missing stages before launching the chatbot
 
-### JSON Serialization Error In Indexing
+### JSON Serialization Failure
 
 Problem:
 
-- `numpy.int64` values in the TF-IDF vocabulary could not be serialized with `json.dumps`
+- `numpy.int64` values in the TF-IDF vocabulary caused `json.dumps` failures
 
 Fix:
 
-- cast vocabulary values to native Python `int` before writing the JSON file
+- coerced vocabulary offsets to native Python `int` before serialization
 
-### MLX API Mismatch
+### MLX API Version Mismatch
 
 Problem:
 
-- the installed `mlx-lm` version did not accept `temp` directly in `generate()`
+- the installed `mlx-lm` release did not accept the older `temp` parameter path
 
 Fix:
 
-- switched to `make_sampler(...)` and passed the sampler into `generate()`
-- updated the call to use the installed API shape
+- switched to `make_sampler(...)`
+- passed the sampler into `generate(...)`
 
 ### Weak Free-Form Question Handling
 
 Problem:
 
-- the system originally behaved like a pre-recorded FAQ
+- the initial bot behaved like a pre-recorded FAQ
 
 Fix:
 
 - added query planning for company, year, and metric detection
-- enabled retrieval with company/year filters
-- made the system respond to open-ended 10-K questions instead of only canned prompts
+- filtered retrieval by company/year when available
+- enabled open-ended 10-K question answering
 
 ## Current Result
 
-The project is now organized as a stage-based SEC financial RAG pipeline that can:
+The final system is a stage-based SEC financial RAG pipeline that can:
 
 - ingest filings
 - chunk them
 - index them
-- store exact facts
-- retrieve relevant evidence
-- generate answers locally with MLX
+- persist exact facts
+- retrieve grounded evidence
+- generate local answers with MLX
 
-The main entrypoint is [`execute.sh`](execute.sh), which launches the full pipeline from one command.
+The main entrypoint is [`execute.sh`](execute.sh), which launches the full stack from the repository root.

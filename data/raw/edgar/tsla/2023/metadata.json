@@ -1,0 +1,12 @@
+{
+  "company": "Tesla",
+  "ticker": "TSLA",
+  "cik": "0001318605",
+  "filing_year": 2023,
+  "accession_number": "0000950170-23-001409",
+  "filing_date": "2023-01-31",
+  "primary_document": "tsla-20221231.htm",
+  "primary_doc_description": "10-K",
+  "archive_url": "https://www.sec.gov/Archives/edgar/data/1318605/000095017023001409/tsla-20221231.htm",
+  "local_path": "data/raw/edgar/tsla/2023/tsla-20221231.htm"
+}

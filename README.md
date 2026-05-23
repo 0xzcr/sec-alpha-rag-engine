@@ -241,3 +241,15 @@ The final system is a stage-based SEC financial RAG pipeline that can:
 - generate local answers with MLX
 
 The main entrypoint is [`execute.sh`](execute.sh), which launches the full stack from the repository root.
+
+## Problems Solved
+
+This architecture addresses several common failure modes in modern RAG systems:
+
+- **Long-context degradation**: 10-K filings are segmented into section-aware chunks so the model never has to reason over an entire filing monolithically.
+- **Numeric hallucination risk**: exact financial values are sourced from a structured facts layer instead of being inferred from generated text.
+- **Query ambiguity**: the query planner extracts company, year, and metric signals from free-form language before retrieval and generation.
+- **Cross-company retrieval drift**: retrieval can be constrained by issuer and fiscal year, reducing context contamination across Apple, Microsoft, and Tesla.
+- **EDGAR ingestion brittleness**: the ingest layer uses SEC-compliant request headers, throttling, retries, and archive-backed document access instead of fragile scraping.
+- **Reproducibility gaps**: every stage persists artifacts to disk, including raw filings, chunk summaries, retrieval indexes, and structured tables.
+- **External API dependence**: the generation layer runs locally on MLX, so the pipeline does not require a hosted LLM for the final synthesis step.

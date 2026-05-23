@@ -56,6 +56,7 @@ def build_tfidf_index(chunks: pd.DataFrame) -> BuiltIndex:
 def save_index(index: BuiltIndex) -> None:
     INDEX_OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
 
+    vocabulary = {token: int(position) for token, position in index.vectorizer.vocabulary_.items()}
     joblib.dump(
         {
             "vectorizer": index.vectorizer,
@@ -66,7 +67,7 @@ def save_index(index: BuiltIndex) -> None:
     )
     index.metadata.to_csv(INDEX_METADATA_PATH, index=False)
     INDEX_VOCAB_PATH.write_text(
-        json.dumps(index.vectorizer.vocabulary_, indent=2, sort_keys=True),
+        json.dumps(vocabulary, indent=2, sort_keys=True),
         encoding="utf-8",
     )
 

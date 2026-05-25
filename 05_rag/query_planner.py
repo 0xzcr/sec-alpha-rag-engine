@@ -71,7 +71,7 @@ NARRATIVE_KEYWORDS = [
     "competition",
 ]
 
-YEAR_PATTERN = re.compile(r"\b(20(?:23|24|25))\b")
+YEAR_PATTERN = re.compile(r"\b(20(?:1[89]|2[0-5]))\b")
 
 
 @dataclass

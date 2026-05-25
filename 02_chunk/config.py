@@ -1,8 +1,9 @@
 from pathlib import Path
 
-RAW_MANIFEST_PATH = Path("data") / "raw" / "edgar" / "ingest_manifest.csv"
+RAW_MANIFEST_PATH = Path("data") / "raw" / "edgar" / "ingest_manifest.jsonl"
 RAW_FILINGS_ROOT = Path("data") / "raw" / "edgar"
 CHUNK_OUTPUT_ROOT = Path("data") / "processed" / "chunks"
+CHUNK_SUMMARY_PATH = CHUNK_OUTPUT_ROOT / "chunk_summary.jsonl"
 
 TARGET_CHUNK_WORDS = 350
 CHUNK_OVERLAP_WORDS = 50

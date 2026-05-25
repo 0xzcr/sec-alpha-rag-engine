@@ -20,10 +20,9 @@ This folder contains the chunking stage for the financial RAG pipeline.
 data/processed/chunks/
   msft/
     msft_chunks.jsonl
-    msft_chunks.csv
   tsla/
   aapl/
-  chunk_summary.csv
+  chunk_summary.jsonl
 ```
 
 ## Run

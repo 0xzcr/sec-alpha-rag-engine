@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import csv
 import json
 import re
 from dataclasses import dataclass
@@ -10,6 +9,7 @@ from pathlib import Path
 import pandas as pd
 from config import (
     CHUNK_OUTPUT_ROOT,
+    CHUNK_SUMMARY_PATH,
     CHUNK_OVERLAP_WORDS,
     MIN_CHUNK_WORDS,
     RAW_FILINGS_ROOT,
@@ -56,7 +56,16 @@ def load_manifest() -> pd.DataFrame:
             f"Manifest not found at {RAW_MANIFEST_PATH}. Run 01_ingest first."
         )
 
-    manifest = pd.read_csv(RAW_MANIFEST_PATH)
+    rows = []
+    with RAW_MANIFEST_PATH.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if line:
+                rows.append(json.loads(line))
+
+    manifest = pd.DataFrame(rows)
+    if manifest.empty:
+        return manifest
     manifest["filing_year"] = manifest["filing_year"].astype(int)
     return manifest.sort_values(["company", "filing_year"]).reset_index(drop=True)
 
@@ -164,35 +173,10 @@ def write_chunk_outputs(rows: list[FilingChunk], company: str, ticker: str) -> N
     company_root.mkdir(parents=True, exist_ok=True)
 
     jsonl_path = company_root / f"{ticker.lower()}_chunks.jsonl"
-    csv_path = company_root / f"{ticker.lower()}_chunks.csv"
 
     with jsonl_path.open("w", encoding="utf-8") as jsonl_file:
         for row in rows:
             jsonl_file.write(json.dumps(row.to_dict(), ensure_ascii=False) + "\n")
-
-    with csv_path.open("w", newline="", encoding="utf-8") as csv_file:
-        fieldnames = (
-            list(rows[0].to_dict().keys())
-            if rows
-            else [
-                "chunk_id",
-                "company",
-                "ticker",
-                "filing_year",
-                "filing_date",
-                "accession_number",
-                "primary_document",
-                "source_path",
-                "section_name",
-                "chunk_index",
-                "text",
-                "word_count",
-            ]
-        )
-        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-        writer.writeheader()
-        for row in rows:
-            writer.writerow(row.to_dict())
 
 
 def main() -> None:
@@ -214,10 +198,11 @@ def main() -> None:
     for (company, ticker), chunks in grouped.items():
         write_chunk_outputs(chunks, company, ticker)
 
-    summary_path = CHUNK_OUTPUT_ROOT / "chunk_summary.csv"
     CHUNK_OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
     summary_rows = [chunk.to_dict() for chunk in all_chunks]
-    pd.DataFrame(summary_rows).to_csv(summary_path, index=False)
+    with CHUNK_SUMMARY_PATH.open("w", encoding="utf-8") as handle:
+        for row in summary_rows:
+            handle.write(json.dumps(row, ensure_ascii=False) + "\n")
     print(f"Chunking complete. Wrote {len(all_chunks)} chunks to {CHUNK_OUTPUT_ROOT}")
 
 

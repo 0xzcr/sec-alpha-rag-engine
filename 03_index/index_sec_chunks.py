@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
 import joblib
@@ -34,7 +33,14 @@ def load_chunks() -> pd.DataFrame:
             f"Chunk summary not found at {CHUNK_SUMMARY_PATH}. Run 02_chunk first."
         )
 
-    chunks = pd.read_csv(CHUNK_SUMMARY_PATH)
+    rows = []
+    with CHUNK_SUMMARY_PATH.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            line = line.strip()
+            if line:
+                rows.append(json.loads(line))
+
+    chunks = pd.DataFrame(rows)
     if "text" not in chunks.columns:
         raise ValueError("Chunk summary is missing the text column.")
     chunks = chunks.fillna("")
@@ -56,7 +62,9 @@ def build_tfidf_index(chunks: pd.DataFrame) -> BuiltIndex:
 def save_index(index: BuiltIndex) -> None:
     INDEX_OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
 
-    vocabulary = {token: int(position) for token, position in index.vectorizer.vocabulary_.items()}
+    vocabulary = {
+        token: int(position) for token, position in index.vectorizer.vocabulary_.items()
+    }
     joblib.dump(
         {
             "vectorizer": index.vectorizer,
@@ -65,7 +73,9 @@ def save_index(index: BuiltIndex) -> None:
         },
         INDEX_ARTIFACT_PATH,
     )
-    index.metadata.to_csv(INDEX_METADATA_PATH, index=False)
+    with INDEX_METADATA_PATH.open("w", encoding="utf-8") as handle:
+        for row in index.metadata.to_dict(orient="records"):
+            handle.write(json.dumps(row, ensure_ascii=False) + "\n")
     INDEX_VOCAB_PATH.write_text(
         json.dumps(vocabulary, indent=2, sort_keys=True),
         encoding="utf-8",

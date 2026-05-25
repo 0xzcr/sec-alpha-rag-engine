@@ -20,7 +20,7 @@ This folder contains the indexing stage for the financial RAG pipeline.
 ```txt
 data/index/
   tfidf_index.joblib
-  chunk_metadata.csv
+  chunk_metadata.jsonl
   vectorizer_vocab.json
 ```
 

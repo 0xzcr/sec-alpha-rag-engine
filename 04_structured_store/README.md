@@ -4,9 +4,9 @@ This folder contains the structured financial data layer for the pipeline.
 
 ## Purpose
 
-- Consolidate the company-level financial CSVs from Task 1
+- Consolidate SEC company facts into a structured financial facts layer
 - Add derived metrics such as YoY change, profit margin, and asset/liability ratio
-- Store the cleaned data in CSV and SQLite formats for exact-number queries
+- Store the cleaned data in SQLite and JSONL formats for exact-number queries
 - Provide a lightweight query API for downstream chatbot/RAG logic
 
 ## Files
@@ -19,8 +19,8 @@ This folder contains the structured financial data layer for the pipeline.
 
 ```txt
 data/structured_store/
-  financial_facts.csv
-  financial_summary.csv
+  financial_facts.jsonl
+  financial_summary.json
   financial_facts.sqlite
 ```
 

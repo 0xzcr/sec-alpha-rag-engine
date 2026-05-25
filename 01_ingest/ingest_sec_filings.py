@@ -1,10 +1,16 @@
 from __future__ import annotations
 
-import csv
 import json
 from pathlib import Path
 
-from config import COMPANIES, END_YEAR, MANIFEST_PATH, RAW_DATA_DIR, START_YEAR
+from config import (
+    COMPANY_FACTS_DIR,
+    COMPANIES,
+    END_YEAR,
+    MANIFEST_PATH,
+    RAW_DATA_DIR,
+    START_YEAR,
+)
 from sec_client import SECClient
 
 
@@ -57,6 +63,8 @@ def ingest_company(
 
     submissions = client.company_submissions(company["cik"])
     save_json(company_dir / "submissions.json", submissions)
+    company_facts = client.company_facts(company["cik"])
+    save_json(COMPANY_FACTS_DIR / f"{company['ticker'].lower()}.json", company_facts)
 
     filings = select_10k_filings(submissions, start_year, end_year)
     manifest_rows: list[dict] = []
@@ -90,23 +98,10 @@ def ingest_company(
 
 
 def write_manifest(rows: list[dict]) -> None:
-    fieldnames = [
-        "company",
-        "ticker",
-        "cik",
-        "filing_year",
-        "filing_date",
-        "accession_number",
-        "primary_document",
-        "primary_doc_description",
-        "archive_url",
-        "local_path",
-    ]
     MANIFEST_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with MANIFEST_PATH.open("w", newline="", encoding="utf-8") as handle:
-        writer = csv.DictWriter(handle, fieldnames=fieldnames)
-        writer.writeheader()
-        writer.writerows(rows)
+    with MANIFEST_PATH.open("w", encoding="utf-8") as handle:
+        for row in rows:
+            handle.write(json.dumps(row, ensure_ascii=False) + "\n")
 
 
 def main() -> None:

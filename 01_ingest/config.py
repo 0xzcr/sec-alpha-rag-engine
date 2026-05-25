@@ -1,6 +1,6 @@
 from pathlib import Path
 
-START_YEAR = 2023
+START_YEAR = 2018
 END_YEAR = 2025
 
 COMPANIES = [
@@ -22,4 +22,5 @@ COMPANIES = [
 ]
 
 RAW_DATA_DIR = Path("data") / "raw" / "edgar"
-MANIFEST_PATH = RAW_DATA_DIR / "ingest_manifest.csv"
+MANIFEST_PATH = RAW_DATA_DIR / "ingest_manifest.jsonl"
+COMPANY_FACTS_DIR = RAW_DATA_DIR / "companyfacts"

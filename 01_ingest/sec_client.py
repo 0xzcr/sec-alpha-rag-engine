@@ -88,6 +88,11 @@ class SECClient:
         url = f"https://data.sec.gov/submissions/CIK{normalized_cik}.json"
         return self.get_json(url)
 
+    def company_facts(self, cik: str) -> dict[str, Any]:
+        normalized_cik = cik.zfill(10)
+        url = f"https://data.sec.gov/api/xbrl/companyfacts/CIK{normalized_cik}.json"
+        return self.get_json(url)
+
     @staticmethod
     def build_archive_url(
         cik: str, accession_number: str, primary_document: str

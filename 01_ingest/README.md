@@ -21,12 +21,13 @@ This folder contains the SEC EDGAR ingestion stage for the financial RAG pipelin
 data/raw/edgar/
   msft/
     submissions.json
+    companyfacts.json
     2023/
       <primary_document>.htm
       metadata.json
   tsla/
   aapl/
-  ingest_manifest.csv
+  ingest_manifest.jsonl
 ```
 
 ## Run

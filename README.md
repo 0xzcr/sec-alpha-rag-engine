@@ -2,7 +2,7 @@
 
 ## Why This Was Built
 
-This project was built to convert raw SEC 10-K filings into a grounded financial QA system that can answer open-ended questions about Apple, Microsoft, and Tesla. The objective was to move beyond CSV-only extraction and implement a full retrieval-augmented workflow that supports both exact financial facts and narrative filing analysis.
+This project was built to convert raw SEC 10-K filings into a grounded financial QA system that can answer open-ended questions about Apple, Microsoft, and Tesla. The objective was to move beyond one-off table extraction and implement a full retrieval-augmented workflow that supports both exact financial facts and narrative filing analysis.
 
 The system is intentionally decomposed into stages so that ingestion, chunking, indexing, structured storage, retrieval, and generation can be evolved independently.
 
@@ -87,9 +87,9 @@ Relevant files:
 
 Responsibilities:
 
-- consolidate company CSV inputs
+- consolidate SEC-derived company facts
 - compute YoY deltas and derived ratios
-- store exact facts in CSV and SQLite
+- store exact facts in SQLite and JSONL artifacts
 - expose lookup utilities for deterministic queries
 
 ### 5. RAG
